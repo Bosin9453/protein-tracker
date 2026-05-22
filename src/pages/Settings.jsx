@@ -134,7 +134,18 @@ export default function Settings({ settings, onUpdateSettings }) {
       <div className="settings-section">
         <div className="settings-section-title">關於</div>
         <div style={{ fontSize: 13, color: 'var(--text-secondary)', lineHeight: 1.8 }}>
-          <p>蛋白質追蹤器 v1.0.0</p>
+          <p style={{ fontWeight: 600, color: 'var(--text)' }}>蛋白質追蹤器 v1.0.1</p>
+          <div style={{
+            marginTop: 6,
+            marginBottom: 10,
+            padding: '8px 10px',
+            borderRadius: 8,
+            background: 'var(--input-bg)',
+            border: '1px solid var(--border)',
+          }}>
+            <p style={{ fontWeight: 500, color: 'var(--text)', marginBottom: 2 }}>v1.0.1 更新備註</p>
+            <p>新增USDA食物來源</p>
+          </div>
           <p>所有資料儲存於本機裝置，不上傳任何伺服器。</p>
           <p style={{ marginTop: 8 }}>資料格式：pt_settings、pt_records（localStorage）</p>
         </div>

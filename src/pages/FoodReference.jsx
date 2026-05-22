@@ -95,24 +95,52 @@ function PortionHelper({ food }) {
 
 function getCommonPortions(food) {
   const portionMap = {
+    // 禽肉
     '雞胸肉': [{ label: '100g', grams: 100 }, { label: '200g (一塊)', grams: 200 }],
+    '雞腿肉': [{ label: '100g', grams: 100 }, { label: '一隻 (200g)', grams: 200 }],
+    '火雞胸肉': [{ label: '100g', grams: 100 }, { label: '一片 (150g)', grams: 150 }],
+    // 豬肉
+    '豬里肌': [{ label: '100g', grams: 100 }, { label: '150g', grams: 150 }],
+    '豬腱': [{ label: '100g', grams: 100 }, { label: '一份 (150g)', grams: 150 }],
+    '豬五花': [{ label: '100g', grams: 100 }, { label: '150g', grams: 150 }],
+    // 牛肉
+    '牛肉片': [{ label: '100g', grams: 100 }, { label: '一份 (150g)', grams: 150 }],
+    '牛絞肉 (瘦)': [{ label: '100g', grams: 100 }, { label: '150g', grams: 150 }],
+    // 海鮮
+    '鮭魚': [{ label: '100g', grams: 100 }, { label: '一片 (150g)', grams: 150 }],
+    '鮪魚罐頭': [{ label: '100g', grams: 100 }, { label: '一罐 (170g)', grams: 170 }],
+    '鱈魚': [{ label: '100g', grams: 100 }, { label: '一片 (150g)', grams: 150 }],
+    '鯛魚': [{ label: '100g', grams: 100 }, { label: '一片 (120g)', grams: 120 }],
+    '沙丁魚罐頭': [{ label: '100g', grams: 100 }, { label: '一罐 (100g)', grams: 100 }],
+    '蝦子': [{ label: '100g', grams: 100 }, { label: '200g', grams: 200 }],
+    '花枝/魷魚': [{ label: '100g', grams: 100 }, { label: '150g', grams: 150 }],
+    '蛤蜊': [{ label: '100g (肉)', grams: 100 }, { label: '200g (肉)', grams: 200 }],
+    '牡蠣': [{ label: '6顆 (90g)', grams: 90 }, { label: '100g', grams: 100 }],
+    '章魚': [{ label: '100g', grams: 100 }, { label: '150g', grams: 150 }],
+    // 蛋
     '雞蛋': [{ label: '一顆 (55g)', grams: 55 }, { label: '兩顆 (110g)', grams: 110 }],
     '水煮蛋': [{ label: '一顆 (55g)', grams: 55 }, { label: '兩顆 (110g)', grams: 110 }],
+    // 豆類
     '板豆腐': [{ label: '100g', grams: 100 }, { label: '一塊 (300g)', grams: 300 }],
     '嫩豆腐': [{ label: '100g', grams: 100 }, { label: '一盒 (350g)', grams: 350 }],
     '毛豆': [{ label: '一碗 (100g)', grams: 100 }, { label: '200g', grams: 200 }],
-    '鮭魚': [{ label: '100g', grams: 100 }, { label: '一片 (150g)', grams: 150 }],
-    '鮪魚罐頭': [{ label: '100g', grams: 100 }, { label: '一罐 (170g)', grams: 170 }],
-    '豬里肌': [{ label: '100g', grams: 100 }, { label: '150g', grams: 150 }],
-    '牛肉片': [{ label: '100g', grams: 100 }, { label: '一份 (150g)', grams: 150 }],
-    '蝦子': [{ label: '100g', grams: 100 }, { label: '200g', grams: 200 }],
+    '納豆': [{ label: '一盒 (50g)', grams: 50 }, { label: '100g', grams: 100 }],
+    '天貝': [{ label: '100g', grams: 100 }, { label: '150g', grams: 150 }],
+    '扁豆 (熟)': [{ label: '半杯 (100g)', grams: 100 }, { label: '200g', grams: 200 }],
+    '黑豆 (熟)': [{ label: '半杯 (100g)', grams: 100 }, { label: '200g', grams: 200 }],
+    '豆漿': [{ label: '一杯 (240g)', grams: 240 }, { label: '100g', grams: 100 }],
+    // 乳製品
     '牛奶': [{ label: '一杯 (240g)', grams: 240 }, { label: '100g', grams: 100 }],
     '希臘優格': [{ label: '一杯 (150g)', grams: 150 }, { label: '100g', grams: 100 }],
-    '雞腿肉': [{ label: '100g', grams: 100 }, { label: '一隻 (200g)', grams: 200 }],
-    '鯛魚': [{ label: '100g', grams: 100 }, { label: '一片 (120g)', grams: 120 }],
-    '豬腱': [{ label: '100g', grams: 100 }, { label: '一份 (150g)', grams: 150 }],
-    '納豆': [{ label: '一盒 (50g)', grams: 50 }, { label: '100g', grams: 100 }],
+    '茅屋起司': [{ label: '100g', grams: 100 }, { label: '200g', grams: 200 }],
+    '切達起司': [{ label: '一片 (30g)', grams: 30 }, { label: '100g', grams: 100 }],
+    // 堅果與種子
+    '杏仁': [{ label: '一把 (30g)', grams: 30 }, { label: '100g', grams: 100 }],
     '花生醬': [{ label: '一匙 (15g)', grams: 15 }, { label: '30g', grams: 30 }],
+    '南瓜籽': [{ label: '一把 (30g)', grams: 30 }, { label: '100g', grams: 100 }],
+    '奇亞籽': [{ label: '一匙 (15g)', grams: 15 }, { label: '30g', grams: 30 }],
+    // 穀類
+    '藜麥 (熟)': [{ label: '一碗 (200g)', grams: 200 }, { label: '100g', grams: 100 }],
   }
   return portionMap[food.name] || null
 }
