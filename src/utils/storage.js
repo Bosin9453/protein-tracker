@@ -1,5 +1,6 @@
 const SETTINGS_KEY = 'pt_settings'
 const RECORDS_KEY = 'pt_records'
+const CUSTOM_FOODS_KEY = 'pt_custom_foods'
 
 export const defaultSettings = {
   weight: 70,
@@ -49,6 +50,20 @@ export function formatDateKey(year, month, day) {
 
 export function generateId() {
   return `${Date.now()}-${Math.random().toString(36).slice(2)}`
+}
+
+export function getCustomFoods() {
+  try {
+    const raw = localStorage.getItem(CUSTOM_FOODS_KEY)
+    if (!raw) return []
+    return JSON.parse(raw)
+  } catch {
+    return []
+  }
+}
+
+export function saveCustomFoods(foods) {
+  localStorage.setItem(CUSTOM_FOODS_KEY, JSON.stringify(foods))
 }
 
 export function getDailyGoal(settings) {

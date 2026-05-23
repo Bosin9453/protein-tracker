@@ -67,6 +67,7 @@ export default function Calendar({ settings, records }) {
         <div className="page-subtitle">每日蛋白質攝取概況</div>
       </div>
 
+      <div className="page-body">
       <div className="calendar-nav">
         <button className="calendar-nav-btn" onClick={prevMonth} aria-label="上個月">‹</button>
         <span className="calendar-month-title">{viewYear}年 {monthNames[viewMonth]}</span>
@@ -138,6 +139,7 @@ export default function Calendar({ settings, records }) {
         records={records}
         goal={goal}
       />
+      </div>
     </>
   )
 }

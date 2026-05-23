@@ -28,6 +28,7 @@ export default function Settings({ settings, onUpdateSettings }) {
         <div className="page-subtitle">個人化您的蛋白質目標</div>
       </div>
 
+      <div className="page-body">
       {/* Daily Goal Display */}
       <div style={{ padding: '16px 16px 0' }}>
         <div className="goal-display">
@@ -134,9 +135,19 @@ export default function Settings({ settings, onUpdateSettings }) {
       <div className="settings-section">
         <div className="settings-section-title">關於</div>
         <div style={{ fontSize: 13, color: 'var(--text-secondary)', lineHeight: 1.8 }}>
-          <p style={{ fontWeight: 600, color: 'var(--text)' }}>蛋白質追蹤器 v1.0.1</p>
+          <p style={{ fontWeight: 600, color: 'var(--text)' }}>蛋白質追蹤器 v1.0.2</p>
           <div style={{
             marginTop: 6,
+            marginBottom: 10,
+            padding: '8px 10px',
+            borderRadius: 8,
+            background: 'var(--input-bg)',
+            border: '1px solid var(--border)',
+          }}>
+            <p style={{ fontWeight: 500, color: 'var(--text)', marginBottom: 2 }}>v1.0.2 更新備註</p>
+            <p>頁面變得美美噠~</p>
+          </div>
+          <div style={{
             marginBottom: 10,
             padding: '8px 10px',
             borderRadius: 8,
@@ -162,6 +173,7 @@ export default function Settings({ settings, onUpdateSettings }) {
         >
           清除所有紀錄
         </button>
+      </div>
       </div>
     </>
   )

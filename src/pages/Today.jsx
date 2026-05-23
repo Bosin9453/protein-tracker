@@ -121,40 +121,42 @@ export default function Today({ settings, records, onUpdateRecords }) {
         <div className="page-subtitle">{dateStr} 週{weekday}</div>
       </div>
 
-      <CircularProgress consumed={consumed} goal={goal} />
+      <div className="page-body">
+        <CircularProgress consumed={consumed} goal={goal} />
 
-      <div className="add-record-btn">
-        <button className="btn btn-primary" onClick={() => setShowModal(true)}>
-          + 新增紀錄
-        </button>
-      </div>
+        <div className="add-record-btn">
+          <button className="btn btn-primary" onClick={() => setShowModal(true)}>
+            + 新增紀錄
+          </button>
+        </div>
 
-      <div className="records-section">
-        <div className="records-title">今日紀錄</div>
-        {todayRecords.length === 0 ? (
-          <div className="empty-state">還沒有紀錄，點擊上方按鈕開始記錄吧！</div>
-        ) : (
-          <div className="record-list">
-            {todayRecords.map(record => (
-              <div key={record.id} className="record-item">
-                <div className="record-info">
-                  <div className="record-name">{record.food}</div>
-                  <div className="record-detail">
-                    {record.grams > 0 ? `${record.grams}g` : '固定份量'}
+        <div className="records-section">
+          <div className="records-title">今日紀錄</div>
+          {todayRecords.length === 0 ? (
+            <div className="empty-state">還沒有紀錄，點擊上方按鈕開始記錄吧！</div>
+          ) : (
+            <div className="record-list">
+              {todayRecords.map(record => (
+                <div key={record.id} className="record-item">
+                  <div className="record-info">
+                    <div className="record-name">{record.food}</div>
+                    <div className="record-detail">
+                      {record.grams > 0 ? `${record.grams}g` : '固定份量'}
+                    </div>
                   </div>
+                  <span className="record-protein">+{record.protein.toFixed(1)}g</span>
+                  <button
+                    className="btn-delete"
+                    onClick={() => handleDelete(record.id)}
+                    aria-label="刪除"
+                  >
+                    ✕
+                  </button>
                 </div>
-                <span className="record-protein">+{record.protein.toFixed(1)}g</span>
-                <button
-                  className="btn-delete"
-                  onClick={() => handleDelete(record.id)}
-                  aria-label="刪除"
-                >
-                  ✕
-                </button>
-              </div>
-            ))}
-          </div>
-        )}
+              ))}
+            </div>
+          )}
+        </div>
       </div>
 
       {showModal && (

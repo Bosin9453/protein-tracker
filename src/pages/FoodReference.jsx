@@ -1,12 +1,30 @@
 import { useState } from 'react'
-import foods from '../data/foods.js'
+import builtinFoods from '../data/foods.js'
+import { getCustomFoods, saveCustomFoods, generateId } from '../utils/storage.js'
 
 export default function FoodReference() {
   const [search, setSearch] = useState('')
+  const [customFoods, setCustomFoods] = useState(() => getCustomFoods())
+  const [showForm, setShowForm] = useState(false)
 
-  const filtered = foods.filter(f =>
+  const allFoods = [...builtinFoods, ...customFoods]
+
+  const filtered = allFoods.filter(f =>
     f.name.toLowerCase().includes(search.toLowerCase())
   )
+
+  function handleAdd(newFood) {
+    const updated = [...customFoods, { ...newFood, id: generateId(), custom: true }]
+    setCustomFoods(updated)
+    saveCustomFoods(updated)
+    setShowForm(false)
+  }
+
+  function handleDelete(id) {
+    const updated = customFoods.filter(f => f.id !== id)
+    setCustomFoods(updated)
+    saveCustomFoods(updated)
+  }
 
   return (
     <>
@@ -14,6 +32,21 @@ export default function FoodReference() {
         <div className="page-title">食物參考</div>
         <div className="page-subtitle">每種食物每100g的蛋白質含量</div>
       </div>
+
+      <div className="page-body">
+      <div style={{ padding: '12px 16px 12px' }}>
+        <button
+          className="btn btn-primary"
+          style={{ width: '100%' }}
+          onClick={() => setShowForm(v => !v)}
+        >
+          {showForm ? '取消' : '+ 新增自訂食物'}
+        </button>
+      </div>
+
+      {showForm && (
+        <AddFoodForm onAdd={handleAdd} onCancel={() => setShowForm(false)} />
+      )}
 
       <div className="food-search-bar">
         <input
@@ -30,26 +63,175 @@ export default function FoodReference() {
           <div className="empty-state">找不到符合的食物</div>
         ) : (
           filtered.map(food => (
-            <FoodRefCard key={food.name} food={food} />
+            <FoodRefCard
+              key={food.id ?? food.name}
+              food={food}
+              onDelete={food.custom ? () => handleDelete(food.id) : null}
+            />
           ))
         )}
+      </div>
       </div>
     </>
   )
 }
 
-function FoodRefCard({ food }) {
+function AddFoodForm({ onAdd, onCancel }) {
+  const [name, setName] = useState('')
+  const [isFixed, setIsFixed] = useState(false)
+  const [proteinPer100g, setProteinPer100g] = useState('')
+  const [fixedProtein, setFixedProtein] = useState('')
+  const [portionNote, setPortionNote] = useState('')
+  const [error, setError] = useState('')
+
+  function handleSubmit(e) {
+    e.preventDefault()
+    if (!name.trim()) { setError('請輸入食物名稱'); return }
+    if (isFixed) {
+      if (!fixedProtein || isNaN(fixedProtein) || Number(fixedProtein) <= 0) {
+        setError('請輸入有效的蛋白質克數'); return
+      }
+      onAdd({ name: name.trim(), proteinPer100g: 0, fixedProtein: Number(fixedProtein), portionNote: portionNote.trim() || '一份' })
+    } else {
+      if (!proteinPer100g || isNaN(proteinPer100g) || Number(proteinPer100g) < 0) {
+        setError('請輸入有效的蛋白質含量'); return
+      }
+      onAdd({ name: name.trim(), proteinPer100g: Number(proteinPer100g), portionNote: portionNote.trim() || '依重量計算' })
+    }
+  }
+
+  return (
+    <form onSubmit={handleSubmit} style={{
+      margin: '0 16px 12px',
+      padding: 16,
+      borderRadius: 12,
+      background: 'var(--card-bg)',
+      border: '1px solid var(--border)',
+      display: 'flex',
+      flexDirection: 'column',
+      gap: 12,
+    }}>
+      <div style={{ fontWeight: 600, fontSize: 15 }}>新增自訂食物</div>
+
+      <div>
+        <label style={{ fontSize: 13, color: 'var(--text-secondary)', display: 'block', marginBottom: 4 }}>食物名稱</label>
+        <input
+          className="form-input"
+          type="text"
+          placeholder="例：自製雞肉沙拉"
+          value={name}
+          onChange={e => { setName(e.target.value); setError('') }}
+        />
+      </div>
+
+      <div style={{ display: 'flex', gap: 8 }}>
+        <button
+          type="button"
+          onClick={() => setIsFixed(false)}
+          style={{
+            flex: 1, padding: '8px 0', borderRadius: 8, fontSize: 13, fontWeight: 500,
+            background: !isFixed ? 'var(--primary)' : 'var(--input-bg)',
+            color: !isFixed ? '#fff' : 'var(--text-secondary)',
+            border: '1px solid var(--border)', cursor: 'pointer',
+          }}
+        >
+          每100g計算
+        </button>
+        <button
+          type="button"
+          onClick={() => setIsFixed(true)}
+          style={{
+            flex: 1, padding: '8px 0', borderRadius: 8, fontSize: 13, fontWeight: 500,
+            background: isFixed ? 'var(--primary)' : 'var(--input-bg)',
+            color: isFixed ? '#fff' : 'var(--text-secondary)',
+            border: '1px solid var(--border)', cursor: 'pointer',
+          }}
+        >
+          固定蛋白質
+        </button>
+      </div>
+
+      {!isFixed ? (
+        <div>
+          <label style={{ fontSize: 13, color: 'var(--text-secondary)', display: 'block', marginBottom: 4 }}>每100g 蛋白質 (g)</label>
+          <input
+            className="form-input"
+            type="number"
+            min="0"
+            max="100"
+            step="0.1"
+            placeholder="例：20.5"
+            value={proteinPer100g}
+            onChange={e => { setProteinPer100g(e.target.value); setError('') }}
+          />
+        </div>
+      ) : (
+        <div>
+          <label style={{ fontSize: 13, color: 'var(--text-secondary)', display: 'block', marginBottom: 4 }}>固定蛋白質克數 (g／份)</label>
+          <input
+            className="form-input"
+            type="number"
+            min="0"
+            step="0.1"
+            placeholder="例：30"
+            value={fixedProtein}
+            onChange={e => { setFixedProtein(e.target.value); setError('') }}
+          />
+        </div>
+      )}
+
+      <div>
+        <label style={{ fontSize: 13, color: 'var(--text-secondary)', display: 'block', marginBottom: 4 }}>份量備註（選填）</label>
+        <input
+          className="form-input"
+          type="text"
+          placeholder="例：一份約150g"
+          value={portionNote}
+          onChange={e => setPortionNote(e.target.value)}
+        />
+      </div>
+
+      {error && <div style={{ fontSize: 13, color: '#ef4444' }}>{error}</div>}
+
+      <button type="submit" className="btn btn-primary">儲存食物</button>
+    </form>
+  )
+}
+
+function FoodRefCard({ food, onDelete }) {
   const isFixed = food.fixedProtein !== undefined
 
   return (
     <div className="food-ref-item">
       <div className="food-ref-header">
-        <span className="food-ref-name">{food.name}</span>
-        <span className="food-ref-protein-badge">
-          {isFixed
-            ? `固定 ${food.fixedProtein}g`
-            : `${food.proteinPer100g}g / 100g`}
-        </span>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+          <span className="food-ref-name">{food.name}</span>
+          {food.custom && (
+            <span style={{
+              fontSize: 10, padding: '1px 6px', borderRadius: 10,
+              background: 'rgba(99,102,241,0.15)', color: '#818cf8',
+              border: '1px solid rgba(99,102,241,0.3)', fontWeight: 500,
+            }}>自訂</span>
+          )}
+        </div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+          <span className="food-ref-protein-badge">
+            {isFixed ? `固定 ${food.fixedProtein}g` : `${food.proteinPer100g}g / 100g`}
+          </span>
+          {onDelete && (
+            <button
+              onClick={onDelete}
+              style={{
+                background: 'none', border: 'none', cursor: 'pointer',
+                color: 'var(--text-secondary)', fontSize: 16, padding: '0 2px',
+                lineHeight: 1,
+              }}
+              title="刪除"
+            >
+              ✕
+            </button>
+          )}
+        </div>
       </div>
       <div className="food-ref-note">份量參考：{food.portionNote}</div>
       {isFixed && (
@@ -63,8 +245,6 @@ function FoodRefCard({ food }) {
 }
 
 function PortionHelper({ food }) {
-  // Extract a reference portion from portionNote for quick calc
-  // Show a quick reference for common portion sizes
   const portions = getCommonPortions(food)
   if (!portions) return null
 
