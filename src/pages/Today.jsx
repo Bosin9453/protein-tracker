@@ -1,11 +1,12 @@
 import { useState, useEffect, useRef } from 'react'
-import foods from '../data/foods.js'
+import builtinFoods from '../data/foods.js'
 import {
   getTodayKey,
   generateId,
   getDailyGoal,
   getCompletionPercent,
   getStatusColor,
+  getCustomFoods,
 } from '../utils/storage.js'
 
 const RADIUS = 80
@@ -180,8 +181,9 @@ function AddRecordModal({ onAdd, onClose }) {
   const searchRef = useRef(null)
   const dropdownRef = useRef(null)
 
+  const allFoods = [...builtinFoods, ...getCustomFoods()]
   const isFixed = selectedFood && selectedFood.fixedProtein !== undefined
-  const filteredFoods = foods.filter(f =>
+  const filteredFoods = allFoods.filter(f =>
     f.name.toLowerCase().includes(searchText.toLowerCase()) && searchText.length > 0
   )
 
@@ -290,6 +292,7 @@ function AddRecordModal({ onAdd, onClose }) {
                             {food.fixedProtein !== undefined
                               ? `固定 ${food.fixedProtein}g 蛋白質`
                               : `每100g 含 ${food.proteinPer100g}g 蛋白質`}
+                            {food.portionNote ? ` · ${food.portionNote}` : ''}
                           </div>
                         </div>
                       ))}
