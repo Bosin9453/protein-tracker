@@ -93,10 +93,11 @@ export default function Today({ settings, records, onUpdateRecords }) {
   const goal = getDailyGoal(settings)
   const consumed = todayRecords.reduce((s, r) => s + r.protein, 0)
 
-  function handleAddRecord(record) {
+  function handleAddRecord(record, dateKey) {
+    const dayRecords = records[dateKey] || []
     const updated = {
       ...records,
-      [todayKey]: [...todayRecords, record],
+      [dateKey]: [...dayRecords, record],
     }
     onUpdateRecords(updated)
     setShowModal(false)
@@ -172,6 +173,7 @@ export default function Today({ settings, records, onUpdateRecords }) {
 
 function AddRecordModal({ onAdd, onClose }) {
   const [mode, setMode] = useState('db') // 'db' | 'custom'
+  const [selectedDate, setSelectedDate] = useState(getTodayKey())
   const [searchText, setSearchText] = useState('')
   const [showDropdown, setShowDropdown] = useState(false)
   const [selectedFood, setSelectedFood] = useState(null)
@@ -220,7 +222,7 @@ function AddRecordModal({ onAdd, onClose }) {
         grams: isFixed ? 0 : parseFloat(grams),
         protein: isFixed ? selectedFood.fixedProtein : computedProtein,
       }
-      onAdd(record)
+      onAdd(record, selectedDate)
     } else {
       if (!customName.trim()) return
       if (!customProtein || parseFloat(customProtein) <= 0) return
@@ -230,7 +232,7 @@ function AddRecordModal({ onAdd, onClose }) {
         grams: 0,
         protein: parseFloat(customProtein),
       }
-      onAdd(record)
+      onAdd(record, selectedDate)
     }
   }
 
@@ -244,6 +246,17 @@ function AddRecordModal({ onAdd, onClose }) {
         <div className="modal-header">
           <div className="modal-title">新增蛋白質紀錄</div>
           <button className="modal-close" onClick={onClose} aria-label="關閉">✕</button>
+        </div>
+
+        <div className="form-group" style={{ marginBottom: '12px' }}>
+          <label className="form-label">紀錄日期</label>
+          <input
+            className="form-input"
+            type="date"
+            value={selectedDate}
+            max={getTodayKey()}
+            onChange={e => setSelectedDate(e.target.value)}
+          />
         </div>
 
         <div className="mode-toggle">
